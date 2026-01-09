@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>J.P. Developers TEJ3U Portfolio</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>&gt;_</text></svg>">
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      padding-top: 72px; /* offset for fixed navbar */
+    }
+    .section-title { font-size: 3rem; font-weight: 700; margin-bottom: 2rem; }
+    .card-custom {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease;
+    }
+    .card-custom:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+      filter: brightness(1.05);
+    }
+    .card-footer-custom { background:#fff; font-weight:600; text-align:center; }
+    .profile-img { width:200px; height:200px; object-fit:cover; border-radius:50%; box-shadow:0 6px 15px rgba(0,0,0,0.2); }
+    .modal-video { width:100%; height:315px; }
+
+    /* ===== Depth / Coverflow Carousel ===== */
+    .depth-carousel {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+    .depth-track {
+      position: relative;
+      height: 360px;
+    }
+    .depth-item {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: min(300px, 70vw);
+      transform: translate(-50%, -50%) scale(0.75);
+      opacity: 0;
+      transition: transform 0.6s ease, opacity 0.6s ease;
+    }
+
+    .depth-item.no-transition {
+      transition: none !important;
+    }
+
+    .depth-item.center {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      z-index: 5;
+    }
+    .depth-item.left {
+      opacity: 0.8;
+      transform: translate(-160%, -50%) scale(0.9);
+      z-index: 4;
+    }
+    .depth-item.right {
+      opacity: 0.8;
+      transform: translate(60%, -50%) scale(0.9);
+      z-index: 4;
+    }
+
+    @media (max-width: 768px) {
+      .depth-item.left,
+      .depth-item.right {
+        display: none;
+      }
+    }
+      
+    /* ===== Inverted Minor Section ===== */
+    .minor-inverted {
+      background-color: #212529; /* dark */
+      color: #f8f9fa; /* light */
+    }
+    .minor-inverted .section-title,
+    .minor-inverted p,
+    .minor-inverted h1 {
+      color: #f8f9fa;
+    }
+    .minor-inverted .card-custom {
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+    .minor-inverted .card-footer-custom {
+      background-color: #212529;
+      color: #f8f9fa;
+    }
+
+    /* ===== Inverted Profile Section ===== */
+    .profile-inverted {
+      background-color: #212529;
+      color: #f8f9fa;
+    }
+    .profile-inverted h1,
+    .profile-inverted p {
+      color: #f8f9fa;
+    }
+
+    /* Fix white-on-white text inside profile card */
+    .profile-inverted .card {
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+    .profile-inverted .card h1,
+    .profile-inverted .card p {
+      color: #212529;
+    }
+
+    /* ===== Profile Cascade Animation ===== */
+    .cascade {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .cascade.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .profile-inverted h1,
+    .profile-inverted p {
+      color: #f8f9fa;
+    }
+  
+    /* ===== Animated Navbar ===== */
+    .navbar {
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .navbar.light {
+      background-color: #f8f9fa !important;
+    }
+    .navbar.light .nav-link,
+    .navbar.light .navbar-brand {
+      color: #212529 !important;
+    }
+    .navbar.dark {
+      background-color: #212529 !important;
+    }
+    .navbar.dark .nav-link,
+    .navbar.dark .navbar-brand {
+      color: #f8f9fa !important;
+    }
+  
+    /* ===== Landing Hero ===== */
+    .landing-hero {
+      background: url('https://images.unsplash.com/photo-1518770660439-4636190af475') center/cover no-repeat;
+      position: relative;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+    }
+    .hero-content {
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== Navbar ===== -->
+<nav id="mainNavbar" class="navbar navbar-expand-lg fixed-top shadow dark">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="#top"><span class="me-2">&lt;/&gt;</span>J.P. Developers TEJ3U Portfolio</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#profile">Profile</a></li>
+        <li class="nav-item"><a class="nav-link" href="#major">Major Accomplishments</a></li>
+        <li class="nav-item"><a class="nav-link" href="#minor">Minor Accomplishments</a></li>
+        <li class="nav-item"><a class="nav-link" href="#reviews">Reviews</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div id="top"></div>
+
+<!-- ===== Landing / Hero Section ===== -->
+<section id="landing" class="container-fluid vh-100 d-flex align-items-center justify-content-center text-center landing-hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content position-relative">
+    <h1 class="display-3 fw-bold text-light">J.P. Developers</h1>
+    <p class="fs-4 text-light">TEJ3U Technology Portfolio</p>
+  </div>
+</section>
+
+<!-- ===== Profile Section ===== -->
+<!-- Section: Profile (Cascading) -->
+<section id="profile" class="py-5 profile-inverted">
+  <div class="container">
+    <div class="row gx-0 align-items-center">
+
+      <!-- Text Card Column -->
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <div class="card rounded-4 shadow-lg me-lg-n5 card-custom">
+          <div class="card-body p-5">
+            <h1 class="fw-bold mb-3">
+              <i class="bi bi-person-circle me-2"></i>Jayden Persaud
+            </h1>
+            <p class="fw-semibold fst-italic">"Design is intelligence made visible."</p>
+            <p class="mt-4">
+              I am a TEJ3U student passionate about technology, programming, and electronics.
+              This portfolio showcases my learning journey, projects, and accomplishments
+              throughout the course.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Column -->
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <img
+          src="https://raw.githubusercontent.com/Persaud-Airlines/-/refs/heads/main/pilot%20(1).jpeg"
+          class="w-100 rounded-4 shadow-lg card-custom"
+          alt="Profile Picture"
+          loading="eager"
+        />
+      </div>
+
+    </div>
+  </div>
+</section>
+<!-- End Profile Section -->
+
+<!-- ===== Major Accomplishments ===== -->
+<section id="major" class="container py-5 text-center">
+  <div class="section-title"><i class="bi bi-trophy-fill me-2"></i>Major Accomplishments</div>
+
+  <div class="depth-carousel">
+    <div id="depthTrack" class="depth-track">
+
+      <div class="depth-item"><div class="card card-custom" data-bs-toggle="modal" data-bs-target="#project1Modal"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/20251008_102654.jpg?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">3x3x3 LED Light Show<br>Click for details</div></div></div>
+      <div class="depth-item"><div class="card card-custom" data-bs-toggle="modal" data-bs-target="#project2Modal"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/Screenshot%202025-11-28%20154529.png?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Robotics<br>Click for details</div></div></div>
+      <div class="depth-item"><div class="card card-custom" data-bs-toggle="modal" data-bs-target="#project3Modal"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/20251030_111219.jpg?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Ubuntu Network<br>Click for details</div></div></div>
+      <div class="depth-item"><div class="card card-custom"><img src="https://picsum.photos/600/400" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Microbit<br>Click for details</div></div></div>
+      <div class="depth-item"><div class="card card-custom"><img src="https://picsum.photos/600/400" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Electronic Security<br>Click for details</div></div></div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== Minor Accomplishments ===== -->
+<section id="minor" class="container-fluid py-5 text-center minor-inverted">
+  <div class="container">
+  <div class="section-title"><i class="bi bi-star-fill me-2"></i>Minor Accomplishments</div>
+
+  <div class="row g-4">
+    <div class="col-md-4"><div class="card card-custom"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/image_2026-01-05_233806097.png?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Build a simple HTML Website</div></div></div>
+    <div class="col-md-4"><div class="card card-custom"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/image_2026-01-05_234043676.png?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Build a MDBootstrap Website</div></div></div>
+    <div class="col-md-4"><div class="card card-custom"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/06LiQJzDE1OdJcUdbgqwz1X-1.webp?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Disassemble and Reassemble a PC</div></div></div>
+    <div class="col-md-4"><div class="card card-custom"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/image_2026-01-05_234236416.png?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Microbit Game</div></div></div>
+    <div class="col-md-4"><div class="card card-custom"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/image_2026-01-05_233857633.png?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Learn how to use Arduino and C++</div></div></div>
+    <div class="col-md-4"><div class="card card-custom"><img src="https://github.com/Persaud-Airlines/file-pool/blob/main/20251103_123804.jpg?raw=true" loading="lazy" class="card-img-top"><div class="card-footer card-footer-custom">Learn how to image an ISO to a USB Flash Drive</div></div></div>
+  </div>
+  </div>
+</section>
+
+<!-- ===== Divider / Stats Section ===== -->
+<section class="container py-5 text-center">
+  <div class="row">
+
+    <div class="col-lg-3 col-md-6 mb-4 position-relative">
+      <i class="bi bi-code-slash fs-1 text-primary mb-3"></i>
+      <h5 class="fw-bold mb-1">10+</h5>
+      <p class="text-muted mb-0">Projects</p>
+      <div class="vr vr-blurry position-absolute top-0 end-0 h-100 d-none d-lg-block"></div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4 position-relative">
+      <i class="bi bi-cpu fs-1 text-primary mb-3"></i>
+      <h5 class="fw-bold mb-1">A LOT</h5>
+      <p class="text-muted mb-0">Rules Broken in this class</p>
+      <div class="vr vr-blurry position-absolute top-0 end-0 h-100 d-none d-lg-block"></div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4 position-relative">
+      <i class="bi bi-lightning-charge fs-1 text-primary mb-3"></i>
+      <h5 class="fw-bold mb-1">1-2MANY</h5>
+      <p class="text-muted mb-0">Skills Learned</p>
+      <div class="vr vr-blurry position-absolute top-0 end-0 h-100 d-none d-lg-block"></div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-4">
+      <i class="bi bi-award fs-1 text-primary mb-3"></i>
+      <h5 class="fw-bold mb-1">96%</h5>
+      <p class="text-muted mb-0">Average Grade</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== Testimonials Section ===== -->
+<section id="reviews" class="container py-5 text-center">
+  <h2 class="fw-bold mb-5">Top 5 Reviews</h2>
+
+  <div class="depth-carousel">
+    <div id="testimonialTrack" class="depth-track">
+
+      <div class="depth-item">
+        <div>
+          <div class="rounded-4 p-4 shadow-3 card-custom" style="background-color: hsl(218, 62%, 95%)">
+            <p class="text-muted mt-4 mb-2">Stoplight - 95%</p>
+            <p class="h5 mb-3 text-primary">Mark Elgersma</p>
+            <p>You got all the steps, but the reflection should have some more information in it. You should include what went well, what could have been better, and possibly outline what you feel you accomplished or proved through the process.</p>
+          </div>
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjUSfWZl6Cp_EGgR1cu4LiOnZvkG1PWIjYi3huedxsiDA80q_D7R=s240-p-k-rw-no" class="shadow-5-strong rounded-circle mt-n4" style="width:90px" alt="Avatar">
+        </div>
+      </div>
+
+      <div class="depth-item">
+        <div>
+          <div class="rounded-4 p-4 shadow-3 card-custom" style="background-color: hsl(218, 62%, 95%)">
+            <p class="text-muted mt-4 mb-2">Soldered Light Show - 100%</p>
+            <p class="h5 mb-3 text-primary">Mark Elgersma</p>
+            <p>Nov 27: Good design process, images, video - good stuff.</p>
+            <p>Nov 19: Once again, you submitted an empty file. Please check your files before you upload them.</p>
+            <p>Oct 30: All work to be submitted was missing.</p>
+          </div>
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjUSfWZl6Cp_EGgR1cu4LiOnZvkG1PWIjYi3huedxsiDA80q_D7R=s240-p-k-rw-no" class="shadow-5-strong rounded-circle mt-n4" style="width:90px" alt="Avatar">
+        </div>
+      </div>
+
+      <div class="depth-item">
+        <div>
+          <div class="rounded-4 p-4 shadow-3 card-custom" style="background-color: hsl(218, 62%, 95%)">
+            <p class="text-muted mt-4 mb-2">Robotics - 93%</p>
+            <p class="h5 mb-3 text-primary">Mark Elgersma</p>
+            <p>28/30 Design Process.</p>
+            <p>5/10 Participation and Place 2/4, 0/3, 3/3</p>
+            <p>60/60 Robot created and usable</p>
+          </div>
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjUSfWZl6Cp_EGgR1cu4LiOnZvkG1PWIjYi3huedxsiDA80q_D7R=s240-p-k-rw-no" class="shadow-5-strong rounded-circle mt-n4" style="width:90px" alt="Avatar">
+        </div>
+      </div>
+
+      <div class="depth-item">
+        <div>
+          <div class="rounded-4 p-4 shadow-3 card-custom" style="background-color: hsl(218, 62%, 95%)">
+            <p class="text-muted mt-4 mb-2">Ubuntu Network - 100%</p>
+            <p class="h5 mb-3 text-primary">Mark Elgersma</p>
+            <p>The document you submitted has nothing to do with this assignment. Please pay close attention to what you submit where.</p>
+          </div>
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjUSfWZl6Cp_EGgR1cu4LiOnZvkG1PWIjYi3huedxsiDA80q_D7R=s240-p-k-rw-no" class="shadow-5-strong rounded-circle mt-n4" style="width:90px" alt="Avatar">
+        </div>
+      </div>
+
+      <div class="depth-item">
+        <div>
+          <div class="rounded-4 p-4 shadow-3 card-custom" style="background-color: hsl(218, 62%, 95%)">
+            <p class="text-muted mt-4 mb-2">Bootstrap - 100%</p>
+            <p class="h5 mb-3 text-primary">Mark Elgersma</p>
+            <p>[no comment]</p>
+          </div>
+          <img src="https://lh3.googleusercontent.com/a-/ALV-UjUSfWZl6Cp_EGgR1cu4LiOnZvkG1PWIjYi3huedxsiDA80q_D7R=s240-p-k-rw-no" class="shadow-5-strong rounded-circle mt-n4" style="width:90px" alt="Avatar">
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== Sample Project Modals ===== -->
+<div class="modal fade" id="project1Modal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body row">
+        <div class="col-md-6">
+          <iframe class="modal-video" loading="lazy" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+        </div>
+        <div class="col-md-6">
+          <h3>3x3x3 LED Light Show</h3>
+          <p>Define the Problem</p>
+          <p>   - I need a lightshow because I can’t afford a disco on Scamazon, but conveniently I have an Arduino UNO R3, breadboard, jumper cables, 27 red LED bulbs and resistors</p>
+          <p>Conduct Research</p>
+          <p>   - I was provided with a comic manual on how to solder, but around here, I don’t do that because I like the true authentic experience of learning how to solder (I knew soldering when I started my tech repair company at the age of 9)</p>
+          <p>   - I was also provided the W3Schools C ++ guide but I don’t like guides because they do not make any sense to me. I just learn by pressing random buttons and typing random things until something explodes or something does the good stuff</p>
+          <p>Generate Ideas/Solutions</p>
+          <p>   - There is only 1 way to do this, solder a 3x3x3 LED cube, look it up according to the wiring diagram and code it by myself in C++</p>
+          <p>Choose a Solution</p>
+          <p>   - I am doing it the only way which is to solder together a 3x3x3 LED cube, look it up according to the wiring diagram and code it by myself in C++</p>
+          <p>Build a Prototype/Model</p>
+          <p>   - I built a prototype model but was unhappy when I tested it because things were shorting out and the LEDs were dim</p>
+          <p>Build another Prototype/Model</p>
+          <p>   - I built the LED cube and it worked this time, refer to the video shared in the D2L</p>
+          <p>Test and Evaluate</p>
+          <p>   - I am happy with the final result, it lights up one LED at a time as intended and had a fun time building this project</p>
+          <p>Reflect/Report</p>
+          <p>   - The name of this course is “TEJ3M1-01-Computer Engineering Technology-Elgersma”, did I engineer something: Yes.</p>
+          <p>   - Did I over-engineer it: No. </p>
+          <p>   - Did it work as intended: Yes</p>
+          <p>   - Did I burn so much bulbs I had to use my own: Yes</p>
+          <p>   - Am I happy with the final result: Somewhat</p>
+          <p>   - Lessons learned: Just burn yourself while soldering so you fear getting burned out of unawareness or electrical tools. It's like placing your hand on the running stove. Also another lesson is KEEP THE HAMMER ON STANDBY!!! You never know what you could fix with destruction.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="project2Modal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body row">
+        <div class="col-md-6">
+          <iframe class="modal-video" loading="lazy" src="https://www.youtube.com/embed/9bZkp7q19f0" allowfullscreen></iframe>
+        </div>
+        <div class="col-md-6">
+          <h3>Robotics</h3>
+          <p>Define the Problem</p>
+          <p>- You need a remotely controlled device that can fit in small spaces to transport objects (light or heavy) from point A to point B where you cannot reach.</p>
+          <p>- You need to transport hazardous or dangerous objects/materials without direct human interaction</p>
+          <p>- Needs to be quick for mini games like "Autonomous Drag-Race”, “Hungry-Hungry-Hippos” and "Obstacle Course”</p>
+          <p>Conduct Research</p>
+          <p>- From TV shows like “The Rookie” they use remotely controlled robotics with robot arms to defuse explosives at a great distance from humans.</p>
+          <p>- In construction, you use cranes, forklifts and excavators to move objects to different areas.</p>
+          <p>Generate Ideas/Solutions</p>
+          <p>- Using classroom resources like the Vex Robotics Kit which conveniently has all the parts I need and the instructions to put it together, complete the building process with the instructions</p>
+          <p>- Using classroom resources like the Vex Robotics Kit, but instead don’t follow the instructions and ‘wing it’ so see what I can do better than the instructions.</p>
+          <p>Choose a Solution</p>
+          <p>- Using classroom resources like the Vex Robotics Kit which conveniently has all the parts I need and the instructions to put it together, complete the building process with the instructions</p>
+          <p>Build a Prototype/Model</p>
+          <p>- Using the instructions to build the robot, I successfully built the robot but there were a few issues</p>
+          <p>· Speed; there were smaller and larger gears available in the box I could utilise</p>
+          <p>· Battery; I would like to get more distance using gear ratios per charge of battery</p>
+          <p>· Structure; I find the gear for the arm likes to mis-align at times and give “I2C Errors” on the control panel</p>
+          <p>Back to Choosing a Solution</p>
+          <p>- Using classroom resources like the Vex Robotics Kit, but instead don’t follow the instructions and ‘wing it’ so see what I can do better than the instructions.</p>
+          <p>Build a Prototype/Model</p>
+          <p>- Went back to square A, looked at the robot, disassembled it and put the gears in the order; 3 Driver:1 Driven.</p>
+          <p>- Had to tilt the wheels 45 degrees to avoid the gears contacting the ground and preventing the robot from moving</p>
+          <p>- Made my robot 4 wheel drive instead of 2 wheel drive for better traction</p>
+          <p>- Improved the arm mechanism to it doesn’t misalign and cause I2C errors</p>
+          <p>Test and Evaluate</p>
+          <p>- No more I2C errors causing the robot to stop, faster speed, better grip on objects and better traction on the ground</p>
+          <p>- The biggest and hard-to-control issue was the battery, upon first boot, the voltage drops from motor startup surges had my replacing the first battery in the first 5 minutes but after that it lasted 30 minutes at full load </p>
+          <p>- The ‘Full load’ is me driving it in circles across the classroom grounds while carrying lego brick</p>
+          <p>Reflect/Report</p>
+          <p>- The name of this course is “TEJ3M1-01-Computer Engineering Technology-Elgersma”, did I engineer something: Yes. </p>
+          <p>- Did I over-engineer it: Also Yes. </p>
+          <p>- Did it work as intended: Even better than plan A</p>
+          <p>- Was constricting plan B difficult: Somewhat, until I had the hammer on standby</p>
+          <p>- Am I happy with the final result: Absolutely, to the point where I bought my own kit so I can put helicopter blades on it and make it fly</p>
+          <p>- Lessons learned: Never following instructions leads to innovation!!! Always be the rulebreaker.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="project3Modal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body row">
+        <div class="col-md-6">
+          <iframe class="modal-video" loading="lazy" src="https://www.youtube.com/embed/l482T0yNkeo" allowfullscreen></iframe>
+        </div>
+        <div class="col-md-6">
+          <h3>Ubuntu Network</h3>
+          <p>Define the Problem</p>
+          <p>- I need to access a web page on a localhost (a website but only on your local network) and modify the webpage from another machine, perhaps the keyboard driver must have been corrupted on the main computer and there is no on-screen keyboard. I will learn how to use SSH and deploy a website on a localhost.</p>
+          <p>- I also needed to learn how to make a bootable USB containing Ubuntu installation media</p>
+          <p>Conduct Research</p>
+          <p>- The use cases for this using SSH is to be able to access servers or Raspberry Pi (or any other device that has the SSH service enabled) remotely without directly interacting with the host device. This can be useful for far distances within a building.</p>
+          <p>- I used Rufus for imaging the ISO to the USB</p>
+          <p>Generate Ideas/Solutions</p>
+          <p>- Deploy website on host, SSH from alternate machine and access the folder the website code is stored on and edit it remotely. Ubuntu 24.5.2 LTS</p>
+          <p>- I used Rufus for imaging the ISO to the USB</p>
+          <p>Choose a Solution</p>
+          <p>- Deploy website on host, SSH from alternate machine and access the folder the website code is stored on and edit it remotely. All using Ubuntu 24.5.2 LTS </p>
+          <p>Build a Prototype/Model</p>
+          <p>- The website is built, it contains a profile page of me.</p>
+          <p>- SSH into the host machine was fairly easy when I had the right libraries installed</p>
+          <p>- Flashed the USB with the installation media and then installing to Internal HDD</p>
+          <p>Test and Evaluate</p>
+          <p>- I edited my profile website from another machine and it worked on the first attempt.</p>
+          <p>Reflect/Report</p>
+          <p>- Real lessons learned. I better understood SSH because I always have troubles with SSH & Raspberry Pi, and I better understood deploying websites from localhost rather than a sandbox application.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+const items = Array.from(document.querySelectorAll('#depthTrack .depth-item'));
+const slots = ['left', 'center', 'right'];
+let order = [0, 1, 2, 3, 4];
+
+function applySlots(disableAnimation = false) {
+  items.forEach(item => {
+    item.className = 'depth-item';
+    if (disableAnimation) item.classList.add('no-transition');
+  });
+
+  const visible = order.slice(1, 4);
+
+  visible.forEach((itemIndex, slotIndex) => {
+    items[itemIndex].classList.add(slots[slotIndex]);
+  });
+
+  if (disableAnimation) {
+    void document.body.offsetHeight;
+    items.forEach(item => item.classList.remove('no-transition'));
+  }
+}
+
+function nextSlide() {
+  applySlots(true);
+  order.push(order.shift());
+  requestAnimationFrame(() => applySlots(false));
+}
+
+window.addEventListener('resize', () => applySlots(true));
+applySlots(true);
+setInterval(nextSlide, 4000);
+
+// ===== Testimonials Carousel =====
+const tItems = Array.from(document.querySelectorAll('#testimonialTrack .depth-item'));
+let tOrder = [0,1,2,3,4];
+
+function applyTestimonialSlots(disable=false) {
+  tItems.forEach(i => {
+    i.className = 'depth-item';
+    if (disable) i.classList.add('no-transition');
+  });
+
+  const visible = tOrder.slice(1,4);
+  visible.forEach((idx, slot) => {
+    tItems[idx].classList.add(['left','center','right'][slot]);
+  });
+
+  if (disable) {
+    void document.body.offsetHeight;
+    tItems.forEach(i => i.classList.remove('no-transition'));
+  }
+}
+
+function nextTestimonial() {
+  applyTestimonialSlots(true);
+  tOrder.push(tOrder.shift());
+  requestAnimationFrame(() => applyTestimonialSlots(false));
+}
+
+applyTestimonialSlots(true);
+setInterval(nextTestimonial, 5000);
+
+// ===== Navbar color sync with sections =====
+const navbar = document.getElementById('mainNavbar');
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      if (entry.target.classList.contains('profile-inverted') || entry.target.classList.contains('minor-inverted')) {
+        navbar.classList.remove('light');
+        navbar.classList.add('dark');
+      } else {
+        navbar.classList.remove('dark');
+        navbar.classList.add('light');
+      }
+    }
+  });
+}, { threshold: 0.6 });
+
+['landing', 'profile', 'major', 'minor'].forEach(id => {
+  const section = document.getElementById(id);
+  if (section) observer.observe(section);
+});
+
+// ===== Profile cascade animation =====
+const cascadeItems = document.querySelectorAll('.cascade');
+
+const cascadeObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const delay = entry.target.dataset.delay || 0;
+      setTimeout(() => entry.target.classList.add('show'), delay);
+      cascadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+cascadeItems.forEach(item => cascadeObserver.observe(item));
+</script>
+    <!-- ===== Footer ===== -->
+<footer class="text-light mt-5" style="background-color:#212529;">
+  <div class="container py-5">
+    <div class="row gy-4">
+
+      <!-- Brand -->
+      <div class="col-md-4">
+        <h5 class="fw-bold mb-3 text-light">&lt;/&gt; J.P. Developers TEJ3U Portfolio</h5>
+        <p class="mb-0" style="color:#ced4da;">
+          Well, thank you for your attention to my 95% powered MD Bootstrap website (the 5% was for videos). Made by DE-TECH-TIVE Services.
+        </p>
+      </div>
+
+      <!-- Quick Jump -->
+      <div class="col-md-4">
+        <h6 class="fw-bold mb-3 text-light">Quick Jump</h6>
+        <ul class="list-unstyled">
+          <li><a href="#landing" class="text-decoration-none" style="color:#ced4da;">Home</a></li>
+          <li><a href="#profile" class="text-decoration-none" style="color:#ced4da;">Profile</a></li>
+          <li><a href="#major" class="text-decoration-none" style="color:#ced4da;">Major Accomplishments</a></li>
+          <li><a href="#minor" class="text-decoration-none" style="color:#ced4da;">Minor Accomplishments</a></li>
+          <li><a href="#reviews" class="text-decoration-none" style="color:#ced4da;">Reviews</a></li>
+        </ul>
+      </div>
+
+      <!-- Socials -->
+      <div class="col-md-4">
+        <h6 class="fw-bold mb-3 text-light">Connect</h6>
+        <a class="btn btn-outline-light btn-sm me-2" href="#"><i class="bi bi-github"></i></a>
+        <a class="btn btn-outline-light btn-sm me-2" href="#"><i class="bi bi-linkedin"></i></a>
+        <a class="btn btn-outline-light btn-sm" href="#"><i class="bi bi-twitter-x"></i></a>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="text-center py-3" style="background-color:rgba(0,0,0,0.25); color:#f8f9fa;">
+    © 2026 DE-TECH-TIVE Services. All rights reserved.
+  </div>
+</footer>
+<!-- ===== End Footer ===== -->
+
+</body>
+</html>
